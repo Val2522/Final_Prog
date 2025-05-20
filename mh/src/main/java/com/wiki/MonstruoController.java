@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import javafx.fxml.FXML;
 
-public class PrimaryController {
+public class MonstruoController {
     
     @FXML
     private void switchToSecondary() throws IOException {
