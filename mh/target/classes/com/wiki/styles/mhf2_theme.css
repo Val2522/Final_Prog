@@ -1,0 +1,48 @@
+/* Estilos generales */
+.root {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #2e231d; /* Fondo oscuro, como las cuevas del juego */
+}
+
+/* Estilos del contenedor principal */
+.vbox {
+    alignment: top-left; /* Alineación en la parte superior izquierda */
+    spacing: 20px;
+    padding: 30px 50px;
+}
+
+/* Estilos del título */
+.title {
+    font-family: "Arial Black";
+    font-size: 24px;
+    color: #c89632; /* Dorado/amarillo, para el texto importante */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 5, 0, 0, 3); /* Sombreado para resaltar */
+}
+
+/* Estilos de los botones */
+.button {
+    font-family: "Arial Bold";
+    font-size: 16px;
+    padding: 10px 30px;
+    background-color: #a37f42; /* Marrón terroso, como la madera y el cuero */
+    color: #ffffff;
+    border-radius: 5px;
+    border: 2px solid #7d5e28; /* Borde más oscuro */
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s; /* Transiciones suaves */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 3, 0, 0, 2);
+}
+
+.button:hover {
+    background-color: #8c6e35; /* Un poco más oscuro al pasar el ratón */
+    transform: scale(1.05); /* Ligeramente más grande al pasar el ratón */
+}
+
+.button:pressed {
+    background-color: #6b5224; /* Más oscuro al hacer clic */
+    transform: scale(0.95); /* Ligeramente más pequeño al hacer clic */
+    -fx-effect: null;  /* Elimina el efecto de sombra al presionar para dar sensación de "hundimiento"*/
+}
+
