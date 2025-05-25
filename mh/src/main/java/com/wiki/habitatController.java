@@ -15,44 +15,58 @@ import javafx.scene.control.cell.PropertyValueFactory; // Importar TextField
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+/**
+ * Controlador para manejar las vistas y acciones relacionadas con los hábitats.
+ * Este controlador incluye métodos para cargar datos, filtrar, cambiar vistas y editar hábitats.
+ */
 public class habitatController {
 
     @FXML
-    private TableView<Habitat> tableView;
+    private TableView<Habitat> tableView; // Tabla para mostrar los hábitats
 
     @FXML
-    private TableColumn<Habitat, Integer> colIdHabitat;
+    private TableColumn<Habitat, Integer> colIdHabitat; // Columna para el ID del hábitat
 
     @FXML
-    private TableColumn<Habitat, String> colNombre;
+    private TableColumn<Habitat, String> colNombre; // Columna para el nombre del hábitat
 
     @FXML
-    private TextField searchField; // Asegúrate de que este FXML ID exista en tu .fxml
+    private TextField searchField; // Campo de búsqueda para filtrar hábitats
 
-    private final ObservableList<Habitat> habitatList = FXCollections.observableArrayList();
-    private ObservableList<Habitat> allHabitats = FXCollections.observableArrayList(); // Lista para todos los hábitats
+    private final ObservableList<Habitat> habitatList = FXCollections.observableArrayList(); // Lista observable para los hábitats visibles en la tabla
+    private ObservableList<Habitat> allHabitats = FXCollections.observableArrayList(); // Lista para todos los hábitats (sin filtrar)
 
+    /**
+     * Constructor por defecto requerido por JavaFX.
+     */
     public habitatController() {
-        // Constructor por defecto requerido por JavaFX
+        // Constructor vacío
     }
 
+    /**
+     * Método de inicialización que se ejecuta automáticamente al cargar la vista.
+     * Configura las columnas de la tabla, carga los datos y agrega eventos.
+     */
     @FXML
     private void initialize() {
+        // Configurar las columnas de la tabla
         colIdHabitat.setCellValueFactory(new PropertyValueFactory<>("idHabitat"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         tableView.setItems(habitatList);
-        
-        // Listener para el TextField de búsqueda
+
+        // Listener para el campo de búsqueda
         if (searchField != null) { // Asegurarse de que el searchField esté inicializado
             searchField.textProperty().addListener((observable, oldValue, newValue) -> {
                 filtrarHabitats(newValue);
             });
         }
 
-        loadData(); // Cargar los datos inicialmente
+        // Cargar los datos inicialmente
+        loadData();
 
+        // Agregar un evento de doble clic en la tabla para editar un hábitat
         tableView.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
+            if (event.getClickCount() == 2) { // Doble clic
                 Habitat selectedHabitat = tableView.getSelectionModel().getSelectedItem();
                 if (selectedHabitat != null) {
                     editHabitat(selectedHabitat);
@@ -61,19 +75,30 @@ public class habitatController {
         });
     }
 
+    /**
+     * Carga los datos de los hábitats desde la base de datos y los agrega a las listas observables.
+     */
     private void loadData() {
         allHabitats.clear(); // Limpiar la lista de todos los hábitats antes de cargar
         Habitat.getAll(allHabitats); // Cargar todos los hábitats desde la base de datos
-        
+
         // Aplicar el filtro actual después de recargar todos los datos
         filtrarHabitats(searchField != null ? searchField.getText() : "");
     }
 
+    /**
+     * Abre el formulario para agregar un nuevo hábitat.
+     */
     @FXML
     private void openNewHabitatForm() {
-        editHabitat(null); // Pasa null para indicar "nuevo"
+        editHabitat(null); // Pasa null para indicar que se está creando un nuevo hábitat
     }
 
+    /**
+     * Abre el formulario para editar un hábitat existente o agregar uno nuevo.
+     *
+     * @param habitat El hábitat que se va a editar. Si es null, se crea un nuevo hábitat.
+     */
     private void editHabitat(Habitat habitat) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("editar_habitat.fxml"));
@@ -94,12 +119,11 @@ public class habitatController {
         }
     }
 
-    // Este método ya no es necesario si Habitat.save() maneja la recarga
-    // public void save(Habitat habitat) throws SQLException {
-    //     habitat.save();
-    //     loadData(); // Esto ya se llama desde editHabitat después de showAndWait()
-    // }
-
+    /**
+     * Filtra los hábitats en función del texto ingresado en el campo de búsqueda.
+     *
+     * @param filtro El texto ingresado para filtrar los hábitats.
+     */
     private void filtrarHabitats(String filtro) {
         habitatList.clear(); // Limpiar la lista mostrada en la tabla
         if (filtro == null || filtro.isEmpty()) {
@@ -114,28 +138,51 @@ public class habitatController {
         }
     }
 
+    /**
+     * Cambia la vista actual a la vista de bestiario.
+     *
+     * @throws IOException Si ocurre un error al cargar el archivo FXML.
+     */
     @FXML
     private void cambiarVistaBestiario() throws IOException {
         App.setRoot("principal_monstruos");
     }
 
+    /**
+     * Cambia la vista actual a la vista de debilidades.
+     *
+     * @throws IOException Si ocurre un error al cargar el archivo FXML.
+     */
     @FXML
     private void cambiarVistaDebilidades() throws IOException {
         App.setRoot("principal_debilidades");
     }
 
+    /**
+     * Cambia la vista actual a la vista de hábitats.
+     * Este método es redundante ya que ya estás en esta vista, pero se incluye por consistencia.
+     *
+     * @throws IOException Si ocurre un error al cargar el archivo FXML.
+     */
     @FXML
     private void cambiarVistaHabitat() throws IOException {
-        // Ya estás en esta vista, pero es bueno tener el método por consistencia
         App.setRoot("principal_habitat");
     }
 
+    /**
+     * Cambia la vista actual a la vista de armas.
+     * Actualmente solo imprime un mensaje en la consola.
+     */
     @FXML
     private void cambiarVistaArmas() {
-        // Lógica para cambiar a la vista de armas
         System.out.println("Cambiando a la vista de armas");
     }
 
+    /**
+     * Cambia la vista actual a la vista de información.
+     *
+     * @throws IOException Si ocurre un error al cargar el archivo FXML.
+     */
     @FXML
     private void cambiarVistaInfo() throws IOException {
         App.setRoot("principal_info");
