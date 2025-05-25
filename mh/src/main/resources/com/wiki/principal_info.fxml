@@ -23,13 +23,12 @@
     </ImageView>
 
     <!-- Título -->
-    <Label text="Monster Hunter Wiki" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
-
-
     <Label text="Autor:" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-underline: true;" />
     <Label text="Álvaro Cruz Lara" wrapText="true" style="-fx-font-size: 16px; -fx-text-alignment: center;" maxWidth="200" />
 
-    <Label text=":v" wrapText="true" style="-fx-font-size: 16px; -fx-text-alignment: center;" maxWidth="200" />
+    <Label text="Corre de contacto:" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-underline: true;" />
+    <Label text="acrular0103@iescelia.org" wrapText="true" style="-fx-font-size: 16px; -fx-text-alignment: center;" maxWidth="200" />
+
     <!-- Botón para regresar -->
     <Button text="Regresar" onAction="#volverAVistaPrincipal" style="-fx-font-size: 14px; -fx-padding: 10;" />
 </VBox>
