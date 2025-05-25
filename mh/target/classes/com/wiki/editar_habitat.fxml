@@ -23,7 +23,8 @@
     <TextField fx:id="txtNombre" GridPane.rowIndex="0" GridPane.columnIndex="1" />
 
     <HBox spacing="10" alignment="CENTER_RIGHT" GridPane.rowIndex="1" GridPane.columnIndex="1">
-        <Button text="Nuevo Habitat" fx:id="btnNuevoHabitat" />
+        <Button text="Añadir Hábitat" fx:id="btnAñadirHabitat" onAction="#añadirHabitat" />
+        <Button text="Eliminar Hábitat" fx:id="btnEliminarHabitat" onAction="#eliminarHabitat" />
         <Button text="Guardar" fx:id="btnGuardar" onAction="#guardarCambios" />
         <Button text="Cancelar" fx:id="btnCancelar" onAction="#cancelar" />
     </HBox>
