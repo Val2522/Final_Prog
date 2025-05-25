@@ -1,3 +1,4 @@
+
 package com.wiki;
 
 import java.sql.Connection;
@@ -46,11 +47,9 @@ public class Debilidad {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                Debilidad d = new Debilidad(
-                        rs.getInt("id_debilidad"),
-                        rs.getString("elemento")
-                );
-                debilidadList.add(d);
+                int idDebilidad = rs.getInt("id_debilidad");
+                String elemento = rs.getString("elemento");
+                debilidadList.add(new Debilidad(idDebilidad, elemento));
             }
 
         } catch (SQLException e) {
@@ -58,30 +57,29 @@ public class Debilidad {
         }
     }
 
-    // Guardar o actualizar debilidad
     public int save() {
-        int filas = 0;
+        int filasAfectadas = 0;
         String query;
-    
         try (Connection connection = connectionBD.getInstance().getConnection()) {
-            if (this.getIdDebilidad() > 0) {
+            if (getIdDebilidad() > 0) {
                 // Update
                 query = "UPDATE Debilidades SET elemento = ? WHERE id_debilidad = ?";
                 try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                    stmt.setString(1, this.getElemento());
-                    stmt.setInt(2, this.getIdDebilidad());
-                    filas = stmt.executeUpdate();
+                    stmt.setString(1, getElemento());
+                    stmt.setInt(2, getIdDebilidad());
+                    filasAfectadas = stmt.executeUpdate();
                 }
             } else {
                 // Insert
                 query = "INSERT INTO Debilidades (elemento) VALUES (?)";
                 try (PreparedStatement stmt = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
-                    stmt.setString(1, this.getElemento());
-                    filas = stmt.executeUpdate();
-    
+                    stmt.setString(1, getElemento());
+                    filasAfectadas = stmt.executeUpdate();
+
+                    // Recuperar el ID generado automáticamente
                     try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                         if (generatedKeys.next()) {
-                            this.setIdDebilidad(generatedKeys.getInt(1));
+                            setIdDebilidad(generatedKeys.getInt(1));
                         }
                     }
                 }
@@ -89,7 +87,7 @@ public class Debilidad {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return filas;
+        return filasAfectadas;
     }
 
     // Eliminar debilidad
@@ -98,7 +96,7 @@ public class Debilidad {
         String query = "DELETE FROM Debilidades WHERE id_debilidad = ?";
         try (Connection connection = connectionBD.getInstance().getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, this.getIdDebilidad());
+            stmt.setInt(1, getIdDebilidad());
             filasAfectadas = stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -109,12 +107,12 @@ public class Debilidad {
     public static Debilidad getDebilidadPorElemento(String elemento) {
         Debilidad debilidad = null;
         String query = "SELECT id_debilidad, elemento FROM Debilidades WHERE elemento = ?";
-    
+
         try (Connection connection = connectionBD.getInstance().getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, elemento);
             ResultSet rs = stmt.executeQuery();
-    
+
             if (rs.next()) {
                 int idDebilidad = rs.getInt("id_debilidad");
                 String elementoDb = rs.getString("elemento");

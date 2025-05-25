@@ -41,6 +41,7 @@ public class MonstruoController {
     private TableColumn<Monstruo, String> colTipo;
 
     private final ObservableList<Monstruo> monstruoList = FXCollections.observableArrayList();
+    private ObservableList<Monstruo> allMonstruos = FXCollections.observableArrayList(); // Store all monsters
 
     public MonstruoController() {
         // Constructor por defecto requerido por JavaFX
@@ -65,6 +66,11 @@ public class MonstruoController {
             }
         });
 
+        // Listener para el TextField de búsqueda
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filtrarMonstruos(newValue);
+        });
+
         tableView.setItems(monstruoList);
 
         // Cargar los datos desde la base de datos
@@ -72,7 +78,8 @@ public class MonstruoController {
     }
 
     private void loadData() {
-        Monstruo.getAll(monstruoList);
+        Monstruo.getAll(allMonstruos); // Load all monsters into allMonstruos
+        monstruoList.addAll(allMonstruos); // Initially, show all monsters
     }
 
     private void abrirFormularioEdicion(Monstruo monstruo) {
@@ -113,6 +120,23 @@ public class MonstruoController {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, monstruo.getIdMonstruo());
             stmt.executeUpdate();
+        }
+    }
+
+    private void filtrarMonstruos(String filtro) {
+        monstruoList.clear();
+        if (filtro == null || filtro.isEmpty()) {
+            monstruoList.addAll(allMonstruos); // Mostrar todos si el filtro está vacío
+        } else {
+            String filtroLowerCase = filtro.toLowerCase();
+            for (Monstruo monstruo : allMonstruos) {
+                if (monstruo.getNombre().toLowerCase().contains(filtroLowerCase) ||
+                    monstruo.getNombreTipo().toLowerCase().contains(filtroLowerCase) ||
+                    monstruo.getTamaño().toLowerCase().contains(filtroLowerCase) ||
+                    monstruo.getHabitat().toLowerCase().contains(filtroLowerCase)) {
+                    monstruoList.add(monstruo);
+                }
+            }
         }
     }
 

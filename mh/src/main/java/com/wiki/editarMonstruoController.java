@@ -5,6 +5,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.sql.Connection; // Importar Connection
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -57,6 +61,8 @@ public class editarMonstruoController {
             String imagePath = monstruo.getImagen();
             if (imagePath != null && !imagePath.isEmpty()) {
                 URL imageUrl = getClass().getResource(imagePath);
+                System.out.println("Image path from DB: " + imagePath);
+                System.out.println("Image URL: " + imageUrl);
                 if (imageUrl != null) {
                     try {
                         Image image = new Image(imageUrl.toExternalForm());
@@ -104,9 +110,72 @@ public class editarMonstruoController {
         sb.append("Habitat: ").append(txtHabitat.getText()).append("\n");
         sb.append("Tipo: ").append(txtTipo.getText()).append("\n");
         sb.append("Lore: ").append(txtLore.getText()).append("\n");
-        // You can also include image path if needed
-        // sb.append("Imagen: ").append(monstruo.getImagen()).append("\n"); 
+
+        // Recuperar y añadir las debilidades del monstruo
+        sb.append("Debilidades:\n");
+        // Asegúrate de que 'monstruo' no sea nulo antes de llamar a getIdMonstruo()
+        if (monstruo != null) {
+            obtenerDebilidadesMonstruo(monstruo.getIdMonstruo(), sb);
+        } else {
+            sb.append("  (No hay monstruo seleccionado para obtener debilidades)\n");
+        }
+
+
+        // Recuperar y añadir los hábitats del monstruo
+        sb.append("Hábitats:\n");
+        // Asegúrate de que 'monstruo' no sea nulo antes de llamar a getIdMonstruo()
+        if (monstruo != null) {
+            obtenerHabitatsMonstruo(monstruo.getIdMonstruo(), sb);
+        } else {
+            sb.append("  (No hay monstruo seleccionado para obtener hábitats)\n");
+        }
+
         return sb.toString();
+    }
+
+    private void obtenerDebilidadesMonstruo(int idMonstruo, StringBuilder sb) {
+        try (Connection conn = connectionBD.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                     "SELECT d.elemento, md.intensidad " + // Añadir intensidad
+                             "FROM Debilidades d " +
+                             "JOIN Monstruos_Debilidades md ON d.id_debilidad = md.id_debilidad " +
+                             "WHERE md.id_monstruo = ?")) {
+            stmt.setInt(1, idMonstruo);
+            ResultSet rs = stmt.executeQuery();
+            if (!rs.isBeforeFirst()) { // Verifica si no hay filas
+                sb.append("  (Ninguna debilidad registrada)\n");
+            } else {
+                while (rs.next()) {
+                    sb.append("- ").append(rs.getString("elemento"))
+                      .append(" (Intensidad: ").append(rs.getInt("intensidad")).append(")\n"); // Mostrar intensidad
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            sb.append("  (Error al obtener las debilidades: ").append(e.getMessage()).append(")\n");
+        }
+    }
+
+    private void obtenerHabitatsMonstruo(int idMonstruo, StringBuilder sb) {
+        try (Connection conn = connectionBD.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                     "SELECT h.nombre " +
+                             "FROM Habitats h " +
+                             "JOIN Monstruos_Habitats mh ON h.id_habitat = mh.id_habitat " +
+                             "WHERE mh.id_monstruo = ?")) {
+            stmt.setInt(1, idMonstruo);
+            ResultSet rs = stmt.executeQuery();
+            if (!rs.isBeforeFirst()) { // Verifica si no hay filas
+                sb.append("  (Ningún hábitat registrado)\n");
+            } else {
+                while (rs.next()) {
+                    sb.append("- ").append(rs.getString("nombre")).append("\n");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            sb.append("  (Error al obtener los hábitats: ").append(e.getMessage()).append(")\n");
+        }
     }
 
     private void guardarTextoEnArchivo(String contenido, File archivo) {

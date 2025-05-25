@@ -1,3 +1,4 @@
+// editarDebilidadController.java
 package com.wiki;
 
 import javafx.fxml.FXML;
