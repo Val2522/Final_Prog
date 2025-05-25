@@ -22,7 +22,7 @@
                     <items>
                         <CustomMenuItem hideOnClick="false">
                             <content>
-                                <TextField fx:id="searchField" promptText="Buscar evento..." style="-fx-pref-width: 200px;" />
+                                <TextField fx:id="searchField" promptText="Buscar habitat..." style="-fx-pref-width: 200px;" />
                             </content>
                         </CustomMenuItem>
                     </items>

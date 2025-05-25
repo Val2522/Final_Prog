@@ -49,6 +49,7 @@
 
     <HBox spacing="10" alignment="CENTER_RIGHT" GridPane.rowIndex="6" GridPane.columnIndex="1">
         <Button text="Guardar" fx:id="btnGuardar" onAction="#guardarCambios" />
+        <Button text="Exportar" fx:id="btnExportarTexto" onAction="#exportarATexto" />
         <Button text="Cancelar" fx:id="btnCancelar" onAction="#cancelar" />
     </HBox>
 
