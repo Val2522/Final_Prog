@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CustomMenuItem?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="800.0" prefWidth="1280.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wiki.habitatController">
+
+    <top>
+        <MenuBar nodeOrientation="RIGHT_TO_LEFT" style="-fx-background-color: LIGHTGBLUE;">
+            <menus>
+                <Menu text="Buscar">
+                    <items>
+                        <CustomMenuItem hideOnClick="false">
+                            <content>
+                                <TextField fx:id="searchField" promptText="Buscar evento..." style="-fx-pref-width: 200px;" />
+                            </content>
+                        </CustomMenuItem>
+                    </items>
+                </Menu>
+            </menus>
+           <BorderPane.margin>
+                <Insets />
+           </BorderPane.margin>
+        </MenuBar>
+    </top>
+
+
+    <left>
+        <VBox spacing="20" style="-fx-background-color: #e0ffe0; -fx-padding: 20;">
+            <Button onAction="#cambiarVistaBestiario" style="-fx-background-color: transparent;">
+                <graphic>
+                           <ImageView fitHeight="91.0" fitWidth="94.0" preserveRatio="true">
+                                <image>
+                                    <Image url="@icons/bestiario_icon.jpg" />
+                                </image></ImageView>
+                </graphic>
+            </Button>
+
+            <Button onAction="#cambiarVistaDebilidades" style="-fx-background-color: transparent;">
+                <graphic>
+                    <ImageView fitHeight="91.0" fitWidth="94.0" preserveRatio="true">
+                        <image>
+                            <Image url="@icons/debilidades_Icon.jpg" />
+                        </image></ImageView>
+                </graphic>
+            </Button>
+
+            <Button onAction="#cambiarVistaHabitat" style="-fx-background-color: transparent;">
+                <graphic>
+                    <ImageView fitHeight="91.0" fitWidth="94.0" preserveRatio="true">
+                        <image>
+                            <Image url="@icons/habitat_icon.jpg" />
+                        </image></ImageView>
+                </graphic>
+            </Button>
+
+            <Button onAction="#cambiarVistaArmas" style="-fx-background-color: transparent;">
+                <graphic>
+                    <ImageView fitHeight="91.0" fitWidth="94.0" preserveRatio="true">
+                        <image>
+                            <Image url="@icons/weapon_hh_icon.jpg" />
+                        </image></ImageView>
+                </graphic>
+            </Button>
+           <Button layoutX="30.0" layoutY="387.0" onAction="#cambiarVistaInfo" style="-fx-background-color: transparent;">
+                <graphic>
+                   <ImageView fitHeight="91.0" fitWidth="94.0" preserveRatio="true">
+                        <image>
+                            <Image url="@icons/info_request-Felyne_Icon.png" />
+                        </image>
+                   </ImageView>
+                </graphic>
+                <padding>
+                    <Insets top="150.0" />
+                </padding>
+           </Button>
+        </VBox>
+    </left>
+
+    <center>
+        <TableView fx:id="tableView" style="-fx-padding: 10; -fx-background-color: transparent;">
+            <columns>
+                <TableColumn fx:id="colIdHabitat" style="-fx-pref-width: 150;" text="Id" />
+                <TableColumn fx:id="colNombre" style="-fx-pref-width: 150;" text="Nombre" />
+            </columns>
+        </TableView>
+    </center>
+</BorderPane>

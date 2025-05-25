@@ -1,5 +1,6 @@
 package com.wiki;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -20,17 +21,25 @@ public class editarHabitatController {
 
     public void setHabitat(Habitat habitat) {
         this.habitat = habitat;
+        updateFields();
+    }
+
+    private void updateFields() {
         if (habitat != null) {
             txtNombre.setText(habitat.getNombre());
+        } else {
+            txtNombre.clear();
         }
     }
 
     @FXML
     private void guardarCambios() {
-        if (habitat != null) {
-            habitat.setNombre(txtNombre.getText());
-            habitat.save();
+        if (habitat == null) {
+            habitat = new Habitat(0, txtNombre.getText()); // Create new Habitat
+        } else {
+            habitat.setNombre(txtNombre.getText()); // Update existing
         }
+        habitat.save();
         closeStage();
     }
 
@@ -44,5 +53,11 @@ public class editarHabitatController {
         if (stage != null) {
             stage.close();
         }
+    }
+
+    @FXML
+    private void handleNuevoHabitat(ActionEvent event) {
+        habitat = null; // Reset for new entry
+        txtNombre.clear();
     }
 }
