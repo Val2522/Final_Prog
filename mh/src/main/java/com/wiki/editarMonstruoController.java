@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -42,12 +43,24 @@ public class editarMonstruoController {
     private Button btnExportarTexto;
 
     @FXML
+    private Button btnNuevoMonstruo;
+
+    @FXML
+    private Button btnEliminarMonstruo;
+
+    @FXML
     private Button btnCancelar;
 
     @FXML
     private TextField txtLore;
 
     private Monstruo monstruo;
+
+    private MonstruoController mainController; // Reference to the main controller
+
+    public void setMainController(MonstruoController controller) {
+        this.mainController = controller;
+    }
 
     public void setMonstruo(Monstruo monstruo) {
         this.monstruo = monstruo;
@@ -78,17 +91,76 @@ public class editarMonstruoController {
         }
     }
 
+    public void nuevoMonstruo() {
+        //  Clear the form
+        txtNombre.clear();
+        txtTamaño.clear();
+        txtHabitat.clear();
+        txtTipo.clear();
+        txtLore.clear();
+        imgMonstruo.setImage(null);
+        monstruo = new Monstruo(0, "", "", 0, "", "", "", ""); 
+    }
+
     @FXML
-    private void guardarCambios() {
-        if (monstruo != null) {
-            monstruo.setNombre(txtNombre.getText());
-            monstruo.setTamaño(txtTamaño.getText());
-            monstruo.setHabitat(txtHabitat.getText());
-            monstruo.setNombreTipo(txtTipo.getText());
-            monstruo.setLore(txtLore.getText());
-            monstruo.save();
+ private void guardarCambios() {
+  if (mainController == null) {
+  System.err.println("Error: mainController is null in guardarCambios()");
+  return; // Or throw an exception, handle this critical error!
+  }
+ 
+  // Get the type name from the TextField
+  String tipoNombre = txtTipo.getText();
+  // Get the id_tipo from the database based on the name
+  int tipoId = mainController.obtenerTipoIdDesdeNombre(tipoNombre);
+  if (tipoId == -1) { // Or whatever value indicates "not found"
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setTitle("Error");
+      alert.setHeaderText("Tipo no encontrado");
+      alert.setContentText("El tipo '" + tipoNombre + "' no existe. Por favor, ingrese un tipo válido.");
+      alert.showAndWait();
+      return; // Do not proceed with saving
+  }
+  // Update the Monstruo object
+  monstruo.setNombre(txtNombre.getText());
+  monstruo.setTamaño(txtTamaño.getText());
+  monstruo.setHabitat(txtHabitat.getText());
+  monstruo.setLore(txtLore.getText());
+  monstruo.setIdTipo(tipoId);  // **SET THE CORRECT id_tipo**
+  // Save the Monstruo to the database
+  monstruo.save();
+  // Refresh the Monstruo list in the main controller
+  mainController.refreshMonstruoList();
+  // Close the edit window
+  closeStage();
+ }
+
+    @FXML
+    private void eliminarMonstruo() {
+        if (monstruo != null && monstruo.getIdMonstruo() > 0) {
+            try {
+                // First, delete related records in ALL dependent tables
+                monstruo.deleteDebilidades();
+                monstruo.deleteHabitats();
+                // Then, delete the monster itself
+                int rowsAffected = monstruo.delete();
+                if (rowsAffected > 0) {
+                    System.out.println("Monstruo eliminado de la base de datos.");
+                    mainController.refreshMonstruoList();
+                    closeStage();
+                } else {
+                    System.out.println("No se pudo eliminar el monstruo.");
+                    // Consider showing an alert
+                }
+            } catch (Exception e) {
+                System.err.println("Error al eliminar el monstruo: " + e.getMessage());
+                e.printStackTrace();
+                // Show an error alert to the user
+            }
+        } else {
+            System.out.println("No hay monstruo seleccionado para eliminar.");
+            // Consider showing an alert
         }
-        closeStage();
     }
 
     @FXML

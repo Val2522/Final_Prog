@@ -10,7 +10,7 @@
 <?import javafx.geometry.Insets?>
 
 <GridPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wiki.editarMonstruoController"
-          hgap="10" vgap="10" style="-fx-padding: 20;" alignment="CENTER">
+         hgap="10" vgap="10" style="-fx-padding: 20;" alignment="CENTER">
     <columnConstraints>
         <javafx.scene.layout.ColumnConstraints hgrow="NEVER" />
         <javafx.scene.layout.ColumnConstraints hgrow="ALWAYS" />
@@ -24,7 +24,7 @@
         <javafx.scene.layout.RowConstraints vgrow="NEVER" />
         <javafx.scene.layout.RowConstraints vgrow="ALWAYS" />
         <javafx.scene.layout.RowConstraints vgrow="NEVER" />
-    </rowConstraints>
+        <javafx.scene.layout.RowConstraints vgrow="NEVER" /> </rowConstraints>
 
     <Label text="Nombre:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
     <TextField fx:id="txtNombre" GridPane.rowIndex="0" GridPane.columnIndex="1" />
@@ -51,6 +51,11 @@
         <Button text="Guardar" fx:id="btnGuardar" onAction="#guardarCambios" />
         <Button text="Exportar" fx:id="btnExportarTexto" onAction="#exportarATexto" />
         <Button text="Cancelar" fx:id="btnCancelar" onAction="#cancelar" />
+    </HBox>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT" GridPane.rowIndex="7" GridPane.columnIndex="1">
+        <Button text="Nuevo Monstruo" fx:id="btnNuevoMonstruo" onAction="#nuevoMonstruo" />
+        <Button text="Eliminar Monstruo" fx:id="btnEliminarMonstruo" onAction="#eliminarMonstruo" />
     </HBox>
 
     <padding>

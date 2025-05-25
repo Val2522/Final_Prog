@@ -50,4 +50,3 @@ CREATE TABLE Monstruos_Debilidades (
     FOREIGN KEY (id_monstruo) REFERENCES Monstruos(id_monstruo),
     FOREIGN KEY (id_debilidad) REFERENCES Debilidades(id_debilidad)
 );
-
