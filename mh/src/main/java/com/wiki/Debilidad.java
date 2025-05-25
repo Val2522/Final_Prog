@@ -1,46 +1,56 @@
 package com.wiki;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 
 public class Debilidad {
-    private int id_debilidad;
-    private String nombre;
-    private String descripcion;
+    private SimpleIntegerProperty idDebilidad;
+    private SimpleStringProperty elemento;
 
-    public Debilidad(int id_debilidad, String nombre, String descripcion) {
-        this.id_debilidad = id_debilidad;
-        this.nombre = nombre;
-        this.descripcion = descripcion;
+    // Constructor
+    public Debilidad(int idDebilidad, String elemento) {
+        this.idDebilidad = new SimpleIntegerProperty(idDebilidad);
+        this.elemento = new SimpleStringProperty(elemento);
     }
 
-    /** GETTERS */
-    public int getId_debilidad() { return id_debilidad; }
-    public String getNombre() { return nombre; }
-    public String getDescripcion() { return descripcion; }
+    // Getters y Setters
+    public int getIdDebilidad() {
+        return idDebilidad.get();
+    }
 
-    /** SETTERS */
-    public void setId_debilidad(int id_debilidad) { this.id_debilidad = id_debilidad; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+    public void setIdDebilidad(int idDebilidad) {
+        this.idDebilidad.set(idDebilidad);
+    }
 
-    /** Obtener todas las debilidades */
-    public static void getAll(ObservableList<Debilidad> listaDebilidades) {
-        listaDebilidades.clear();
+    public String getElemento() {
+        return elemento.get();
+    }
+
+    public void setElemento(String elemento) {
+        this.elemento.set(elemento);
+    }
+
+    // Obtener todas las debilidades
+    public static void getAll(ObservableList<Debilidad> debilidadList) {
+        debilidadList.clear();
+        String query = "SELECT * FROM Debilidades";
+
         try (Connection connection = connectionBD.getInstance().getConnection();
-             Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM Debilidades")) {
+             PreparedStatement stmt = connection.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 Debilidad d = new Debilidad(
-                    rs.getInt("id_debilidad"),
-                    rs.getString("nombre"),
-                    rs.getString("descripcion")
+                        rs.getInt("id_debilidad"),
+                        rs.getString("elemento")
                 );
-                listaDebilidades.add(d);
+                debilidadList.add(d);
             }
 
         } catch (SQLException e) {
@@ -48,42 +58,71 @@ public class Debilidad {
         }
     }
 
-    /** Guardar o actualizar debilidad */
+    // Guardar o actualizar debilidad
     public int save() {
         int filas = 0;
-        try (Connection connection = connectionBD.getInstance().getConnection();
-             Statement stmt = connection.createStatement()) {
-
-            ResultSet rs = stmt.executeQuery("SELECT * FROM Debilidades WHERE id_debilidad = " + this.id_debilidad);
-            if (rs.next()) {
-                String update = "UPDATE Debilidades SET nombre='" + this.nombre + "', descripcion='" + this.descripcion +
-                                "' WHERE id_debilidad=" + this.id_debilidad;
-                filas = stmt.executeUpdate(update);
+        String query;
+    
+        try (Connection connection = connectionBD.getInstance().getConnection()) {
+            if (this.getIdDebilidad() > 0) {
+                // Update
+                query = "UPDATE Debilidades SET elemento = ? WHERE id_debilidad = ?";
+                try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                    stmt.setString(1, this.getElemento());
+                    stmt.setInt(2, this.getIdDebilidad());
+                    filas = stmt.executeUpdate();
+                }
             } else {
-                String insert = "INSERT INTO Debilidades (id_debilidad, nombre, descripcion) VALUES (" +
-                                this.id_debilidad + ", '" + this.nombre + "', '" + this.descripcion + "')";
-                filas = stmt.executeUpdate(insert);
+                // Insert
+                query = "INSERT INTO Debilidades (elemento) VALUES (?)";
+                try (PreparedStatement stmt = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                    stmt.setString(1, this.getElemento());
+                    filas = stmt.executeUpdate();
+    
+                    try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
+                            this.setIdDebilidad(generatedKeys.getInt(1));
+                        }
+                    }
+                }
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return filas;
     }
 
-    /** Eliminar debilidad */
+    // Eliminar debilidad
     public int delete() {
-        int filas = 0;
+        int filasAfectadas = 0;
+        String query = "DELETE FROM Debilidades WHERE id_debilidad = ?";
         try (Connection connection = connectionBD.getInstance().getConnection();
-             Statement stmt = connection.createStatement()) {
-
-            String query = "DELETE FROM Debilidades WHERE id_debilidad = " + this.id_debilidad;
-            filas = stmt.executeUpdate(query);
-
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, this.getIdDebilidad());
+            filasAfectadas = stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return filas;
+        return filasAfectadas;
+    }
+
+    public static Debilidad getDebilidadPorElemento(String elemento) {
+        Debilidad debilidad = null;
+        String query = "SELECT id_debilidad, elemento FROM Debilidades WHERE elemento = ?";
+    
+        try (Connection connection = connectionBD.getInstance().getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, elemento);
+            ResultSet rs = stmt.executeQuery();
+    
+            if (rs.next()) {
+                int idDebilidad = rs.getInt("id_debilidad");
+                String elementoDb = rs.getString("elemento");
+                debilidad = new Debilidad(idDebilidad, elementoDb);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return debilidad;
     }
 }
-

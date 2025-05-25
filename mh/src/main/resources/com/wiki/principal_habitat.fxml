@@ -16,7 +16,7 @@
 <BorderPane prefHeight="800.0" prefWidth="1280.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.wiki.habitatController">
 
     <top>
-        <MenuBar nodeOrientation="RIGHT_TO_LEFT" style="-fx-background-color: LIGHTGBLUE;">
+        <MenuBar nodeOrientation="RIGHT_TO_LEFT" style="-fx-background-color: GRAY;">
             <menus>
                 <Menu text="Buscar">
                     <items>
