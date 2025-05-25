@@ -32,6 +32,9 @@ public class editarMonstruoController {
     @FXML
     private Button btnCancelar;
 
+    @FXML
+    private TextField txtLore;
+
     private Monstruo monstruo;
 
     public void setMonstruo(Monstruo monstruo) {
@@ -41,6 +44,7 @@ public class editarMonstruoController {
             txtTamaño.setText(monstruo.getTamaño());
             txtHabitat.setText(monstruo.getHabitat());
             txtTipo.setText(monstruo.getNombreTipo());
+            txtLore.setText(monstruo.getLore());
 
             // Load the image if the URL is valid
             String imagePath = monstruo.getImagen();
@@ -70,6 +74,7 @@ public class editarMonstruoController {
             monstruo.setTamaño(txtTamaño.getText());
             monstruo.setHabitat(txtHabitat.getText());
             monstruo.setNombreTipo(txtTipo.getText());
+            monstruo.setLore(txtLore.getText());
             monstruo.save();
         }
         closeStage();

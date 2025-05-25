@@ -21,6 +21,7 @@
         <javafx.scene.layout.RowConstraints vgrow="NEVER" />
         <javafx.scene.layout.RowConstraints vgrow="NEVER" />
         <javafx.scene.layout.RowConstraints vgrow="NEVER" />
+        <javafx.scene.layout.RowConstraints vgrow="NEVER" />
         <javafx.scene.layout.RowConstraints vgrow="ALWAYS" />
         <javafx.scene.layout.RowConstraints vgrow="NEVER" />
     </rowConstraints>
@@ -37,13 +38,16 @@
     <Label text="Tipo:" GridPane.rowIndex="3" GridPane.columnIndex="0" />
     <TextField fx:id="txtTipo" GridPane.rowIndex="3" GridPane.columnIndex="1" />
 
-    <VBox GridPane.rowIndex="4" GridPane.columnIndex="1" alignment="CENTER">
+    <Label text="Lore:" GridPane.rowIndex="4" GridPane.columnIndex="0" />
+    <TextField fx:id="txtLore" GridPane.rowIndex="4" GridPane.columnIndex="1" />
+
+    <VBox GridPane.rowIndex="5" GridPane.columnIndex="1" alignment="CENTER">
         <Label text="Imagen:" />
         <ImageView fx:id="imgMonstruo" fitHeight="150" fitWidth="150" preserveRatio="true" />
     </VBox>
 
 
-    <HBox spacing="10" alignment="CENTER_RIGHT" GridPane.rowIndex="5" GridPane.columnIndex="1">
+    <HBox spacing="10" alignment="CENTER_RIGHT" GridPane.rowIndex="6" GridPane.columnIndex="1">
         <Button text="Guardar" fx:id="btnGuardar" onAction="#guardarCambios" />
         <Button text="Cancelar" fx:id="btnCancelar" onAction="#cancelar" />
     </HBox>
