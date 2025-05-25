@@ -77,18 +77,19 @@ public class MonstruoController {
 
     private void abrirFormularioEdicion(Monstruo monstruo) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("editar_monstruo.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/wiki/editar_monstruo.fxml")); // Correct path (most likely)
             Parent root = loader.load();
-
+    
             editarMonstruoController controller = loader.getController();
             controller.setMonstruo(monstruo);
-
+    
             Stage stage = new Stage();
             stage.setTitle("Editar Monstruo");
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
+            // Add more error handling here if needed (e.g., a dialog to inform the user)
         }
     }
 

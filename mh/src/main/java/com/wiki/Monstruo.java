@@ -130,39 +130,46 @@ public class Monstruo {
     }
 
     // Guardar o actualizar monstruo
-    public int save() {
-        int filasAfectadas = 0;
-        String query;
-        try (Connection connection = connectionBD.getInstance().getConnection()) {
-            if (this.getIdMonstruo() > 0) {
-                // Update
-                query = "UPDATE Monstruos SET nombre = ?, imagen = ?, id_tipo = ?, tamaño = ?, lore = ? WHERE id_monstruo = ?";
-                try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                    stmt.setString(1, this.getNombre());
-                    stmt.setString(2, this.getImagen());
-                    stmt.setInt(3, this.getIdTipo());
-                    stmt.setString(4, this.getTamaño());
-                    stmt.setString(5, this.getLore());
-                    stmt.setInt(6, this.getIdMonstruo());
-                    filasAfectadas = stmt.executeUpdate();
-                }
-            } else {
-                // Insert
-                query = "INSERT INTO Monstruos (nombre, imagen, id_tipo, tamaño, lore) VALUES (?, ?, ?, ?, ?)";
-                try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                    stmt.setString(1, this.getNombre());
-                    stmt.setString(2, this.getImagen());
-                    stmt.setInt(3, this.getIdTipo());
-                    stmt.setString(4, this.getTamaño());
-                    stmt.setString(5, this.getLore());
-                    filasAfectadas = stmt.executeUpdate();
+public int save() {
+    int filasAfectadas = 0;
+    String query;
+    try (Connection connection = connectionBD.getInstance().getConnection()) {
+        if (this.getIdMonstruo() > 0) {
+            // Update
+            query = "UPDATE Monstruos SET nombre = ?, imagen = ?, id_tipo = ?, tamaño = ?, lore = ? WHERE id_monstruo = ?";
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setString(1, this.getNombre());
+                stmt.setString(2, this.getImagen());
+                stmt.setInt(3, this.getIdTipo());
+                stmt.setString(4, this.getTamaño());
+                stmt.setString(5, this.getLore());
+                stmt.setInt(6, this.getIdMonstruo());
+                filasAfectadas = stmt.executeUpdate();
+            }
+        } else {
+            // Insert
+            query = "INSERT INTO Monstruos (nombre, imagen, id_tipo, tamaño, lore) VALUES (?, ?, ?, ?, ?)";
+            try (PreparedStatement stmt = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                stmt.setString(1, this.getNombre());
+                stmt.setString(2, this.getImagen());
+                stmt.setInt(3, this.getIdTipo());
+                stmt.setString(4, this.getTamaño());
+                stmt.setString(5, this.getLore());
+                filasAfectadas = stmt.executeUpdate();
+
+                // Recuperar el ID generado automáticamente
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        this.setIdMonstruo(generatedKeys.getInt(1));
+                    }
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return filasAfectadas;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return filasAfectadas;
+}
 
     // Eliminar monstruo
     public int delete() {
