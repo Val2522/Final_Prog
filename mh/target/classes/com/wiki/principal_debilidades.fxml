@@ -66,15 +66,6 @@
                 </graphic>
             </Button>
 
-            <Button onAction="#cambiarVistaArmas" style="-fx-background-color: transparent;">
-                <graphic>
-                    <ImageView fitHeight="91.0" fitWidth="94.0" preserveRatio="true">
-                        <image>
-                            <Image url="@icons/weapon_hh_icon.jpg" />
-                        </image>
-                    </ImageView>
-                </graphic>
-            </Button>
             <Button layoutX="30.0" layoutY="387.0" onAction="#cambiarVistaInfo" style="-fx-background-color: transparent;">
                 <graphic>
                     <ImageView fitHeight="91.0" fitWidth="94.0" preserveRatio="true">
