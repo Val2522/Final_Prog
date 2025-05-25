@@ -1,14 +1,13 @@
 package com.wiki;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField; // Import Image
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView; // Import URL
-import javafx.stage.Stage; // Import MalformedURLException
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image; // Import Image
+import javafx.scene.image.ImageView;
+import javafx.stage.Stage; // Import URL
 
 public class editarMonstruoController {
 
@@ -44,19 +43,21 @@ public class editarMonstruoController {
             txtTipo.setText(monstruo.getNombreTipo());
 
             // Load the image if the URL is valid
-            String imageUrl = monstruo.getImagen();
-            if (imageUrl != null && !imageUrl.isEmpty()) {
-                try {
-                    URL url = new URL(imageUrl);
-                    Image image = new Image(url.toExternalForm());
-                    imgMonstruo.setImage(image);
-                } catch (MalformedURLException e) {
-                    System.err.println("Invalid image URL: " + imageUrl);
-                    e.printStackTrace();
-                    // Optionally, set a placeholder image or leave it empty
-                } catch (IllegalArgumentException e) {
-                    System.err.println("Error loading image from URL: " + imageUrl);
-                    e.printStackTrace();
+            String imagePath = monstruo.getImagen();
+            if (imagePath != null && !imagePath.isEmpty()) {
+                URL imageUrl = getClass().getResource(imagePath);
+                System.out.println("Image path from DB: " + imagePath);
+                System.out.println("Image URL: " + imageUrl);
+                if (imageUrl != null) {
+                    try {
+                        Image image = new Image(imageUrl.toExternalForm());
+                        imgMonstruo.setImage(image);
+                    } catch (Exception e) {
+                        System.err.println("Error loading image: " + imagePath);
+                        e.printStackTrace();
+                    }
+                } else {
+                    System.err.println("Resource not found: " + imagePath);
                 }
             }
         }
