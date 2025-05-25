@@ -1,166 +1,177 @@
 package com.wiki;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
-import javafx.collections.FXCollections;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 
 public class Monstruo {
-    private int id_monstruo;
-    private String nombre;
-    private String imagen;
-    private int id_tipo;
-    private String tamaño;
-    private String lore;
-    private String nombre_tipo;
+    private SimpleIntegerProperty idMonstruo;
+    private SimpleStringProperty nombre;
+    private SimpleStringProperty imagen;
+    private SimpleIntegerProperty id_tipo;
+    private SimpleStringProperty tamaño;
+    private SimpleStringProperty lore;
+    private SimpleStringProperty nombre_tipo;
+    private SimpleStringProperty habitat;
 
-
-    /**Constructor */
-    public Monstruo(int id_monstruo, String nombre, String imagen, int id_tipo, String tamaño, String lore) {
-        this.id_monstruo = id_monstruo;
-        this.nombre = nombre;
-        this.imagen = imagen;
-        this.id_tipo = id_tipo;
-        this.tamaño = tamaño;
-        this.lore = lore;
+    // Constructor
+    public Monstruo(int idMonstruo, String nombre, String imagen, int id_tipo, String tamaño, String lore, String habitat, String nombre_tipo) {
+        this.idMonstruo = new SimpleIntegerProperty(idMonstruo);
+        this.nombre = new SimpleStringProperty(nombre);
+        this.imagen = new SimpleStringProperty(imagen);
+        this.id_tipo = new SimpleIntegerProperty(id_tipo);
+        this.tamaño = new SimpleStringProperty(tamaño);
+        this.lore = new SimpleStringProperty(lore);
+        this.habitat = new SimpleStringProperty(habitat);
+        this.nombre_tipo = new SimpleStringProperty(nombre_tipo);
     }
 
-    /** GETTERS **/
-    public int getId_monstruo() { 
-        return id_monstruo; 
+    // Getters y Setters
+    public int getIdMonstruo() {
+        return idMonstruo.get();
     }
 
-    public String getNombre() { 
-        return nombre; 
+    public void setIdMonstruo(int idMonstruo) {
+        this.idMonstruo.set(idMonstruo);
     }
 
-    public String getImagen() { 
-        return imagen; 
+    public String getNombre() {
+        return nombre.get();
     }
 
-    public int getIdTipo() { 
-        return id_tipo;
+    public void setNombre(String nombre) {
+        this.nombre.set(nombre);
     }
 
-    public String getTamaño() { 
-        return tamaño; 
+    public String getImagen() {
+        return imagen.get();
     }
 
-    public String getLore() { 
-        return lore; 
+    public void setImagen(String imagen) {
+        this.imagen.set(imagen);
     }
 
-    public String getNombreTipo() {  
-        return nombre_tipo; 
+    public int getIdTipo() {
+        return id_tipo.get();
     }
 
-
-
-    /** SETTERS **/
-    public void setId_monstruo(int id_monstruo) { 
-        this.id_monstruo = id_monstruo; 
+    public void setIdTipo(int id_tipo) {
+        this.id_tipo.set(id_tipo);
     }
 
-    public void setNombre(String nombre) { 
-        this.nombre = nombre; 
+    public String getTamaño() {
+        return tamaño.get();
     }
 
-    public void setImagen(String imagen) { 
-        this.imagen = imagen; 
+    public void setTamaño(String tamaño) {
+        this.tamaño.set(tamaño);
     }
 
-    public void setId_tipo(int id_tipo) { 
-        this.id_tipo = id_tipo;
+    public String getLore() {
+        return lore.get();
     }
 
-    public void setTamaño(String tamaño) { 
-        this.tamaño = tamaño;
+    public void setLore(String lore) {
+        this.lore.set(lore);
     }
 
-    public void setLore(String lore) { 
-        this.lore = lore; 
+    public String getNombreTipo() {
+        return nombre_tipo.get();
     }
 
-    public void setNombreTipo(String nombre_tipo) { 
-        this.nombre_tipo = nombre_tipo; 
+    public void setNombreTipo(String nombre_tipo) {
+        this.nombre_tipo.set(nombre_tipo);
     }
 
+    public String getHabitat() {
+        return habitat.get();
+    }
 
-    /** Método para cargar monstruos desde la base de datos **/
-    public static ObservableList<Monstruo> cargarMonstruos(Connection connection) {
-        ObservableList<Monstruo> monstruos = FXCollections.observableArrayList();
-        String query = "SELECT m.id_monstruo, m.nombre, m.imagen, m.id_tipo, m.tamaño, m.lore, t.nombre AS nombre_tipo " +
-                       "FROM monstruos m " +
-                       "JOIN tipos t ON m.id_tipo = t.id";
+    public void setHabitat(String habitat) {
+        this.habitat.set(habitat);
+    }
 
-        try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)) {
+    // Obtener todos los monstruos
+    public static void getAll(ObservableList<Monstruo> monstruoList) {
+        monstruoList.clear();
+        String query = "SELECT Monstruos.id_monstruo AS idMonstruo, Monstruos.nombre, Monstruos.imagen, Monstruos.tamaño, Monstruos.lore, " +
+                "Habitats.nombre AS habitat, Tipos.nombre AS nombreTipo, Monstruos.id_tipo AS id_tipo " +
+                "FROM Monstruos " +
+                "INNER JOIN Tipos ON Monstruos.id_tipo = Tipos.id_tipo " +
+                "INNER JOIN Monstruos_Habitats ON Monstruos.id_monstruo = Monstruos_Habitats.id_monstruo " +
+                "INNER JOIN Habitats ON Monstruos_Habitats.id_habitat = Habitats.id_habitat;";
 
-            while (resultSet.next()) {
-                int id_monstruo = resultSet.getInt("id_monstruo");
-                String nombre = resultSet.getString("nombre");
-                String imagen = resultSet.getString("imagen");
-                int id_tipo = resultSet.getInt("id_tipo");
-                String tamaño = resultSet.getString("tamaño");
-                String lore = resultSet.getString("lore");
-                String nombre_tipo = resultSet.getString("nombre_tipo");
+        try (Connection connection = connectionBD.getInstance().getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
 
-                Monstruo monstruo = new Monstruo(id_monstruo, nombre, imagen, id_tipo, tamaño, lore);
-                monstruo.setNombreTipo(nombre_tipo);
-                monstruos.add(monstruo);
+            while (rs.next()) {
+                Monstruo e = new Monstruo(
+                        rs.getInt("idMonstruo"),
+                        rs.getString("nombre"),
+                        rs.getString("imagen"),
+                        rs.getInt("id_tipo"),
+                        rs.getString("tamaño"),
+                        rs.getString("lore"),
+                        rs.getString("habitat"),
+                        rs.getString("nombreTipo")
+                );
+                monstruoList.add(e);
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return monstruos;
     }
 
-
-    /** Eliminar monstruo **/
-    public int delete() {
+    // Guardar o actualizar monstruo
+    public int save() {
         int filasAfectadas = 0;
-        try (Connection connection = connectionBD.getInstance().getConnection();
-                Statement st = connection.createStatement()) {
-
-            String query = "DELETE FROM Monstruos WHERE id_monstruo = " + this.getId_monstruo();
-            filasAfectadas = st.executeUpdate(query);
-
+        String query;
+        try (Connection connection = connectionBD.getInstance().getConnection()) {
+            if (this.getIdMonstruo() > 0) {
+                // Update
+                query = "UPDATE Monstruos SET nombre = ?, imagen = ?, id_tipo = ?, tamaño = ?, lore = ? WHERE id_monstruo = ?";
+                try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                    stmt.setString(1, this.getNombre());
+                    stmt.setString(2, this.getImagen());
+                    stmt.setInt(3, this.getIdTipo());
+                    stmt.setString(4, this.getTamaño());
+                    stmt.setString(5, this.getLore());
+                    stmt.setInt(6, this.getIdMonstruo());
+                    filasAfectadas = stmt.executeUpdate();
+                }
+            } else {
+                // Insert
+                query = "INSERT INTO Monstruos (nombre, imagen, id_tipo, tamaño, lore) VALUES (?, ?, ?, ?, ?)";
+                try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                    stmt.setString(1, this.getNombre());
+                    stmt.setString(2, this.getImagen());
+                    stmt.setInt(3, this.getIdTipo());
+                    stmt.setString(4, this.getTamaño());
+                    stmt.setString(5, this.getLore());
+                    filasAfectadas = stmt.executeUpdate();
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return filasAfectadas;
     }
 
-
-    /** Guardar o actualizar monstruo **/
-    public int save() {
+    // Eliminar monstruo
+    public int delete() {
         int filasAfectadas = 0;
+        String query = "DELETE FROM Monstruos WHERE id_monstruo = ?";
         try (Connection connection = connectionBD.getInstance().getConnection();
-             Statement st = connection.createStatement()) {
-
-            String checkQuery = "SELECT * FROM Monstruos WHERE id_monstruo = " + this.getId_monstruo();
-            ResultSet rs = st.executeQuery(checkQuery);
-            if (rs.next()) {
-                // Update
-                String updateQuery = "UPDATE Monstruos SET nombre='" + this.getNombre() + 
-                    "', imagen='" + this.getImagen() + 
-                    "', id_tipo=" + this.getIdTipo() + 
-                    ", tamaño='" + this.getTamaño() + 
-                    "', lore='" + this.getLore() + 
-                    "' WHERE id_monstruo=" + this.getId_monstruo();
-                filasAfectadas = st.executeUpdate(updateQuery);
-            } else {
-                // Insert
-                String insertQuery = "INSERT INTO Monstruos (id_monstruo, nombre, imagen, id_tipo, tamaño, lore) VALUES (" +
-                    this.getId_monstruo() + ", '" + this.getNombre() + "', '" + this.getImagen() + "', " +
-                    this.getIdTipo() + ", '" + this.getTamaño() + "', '" + this.getLore() + "')";
-                filasAfectadas = st.executeUpdate(insertQuery);
-            }
-
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, this.getIdMonstruo());
+            filasAfectadas = stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
